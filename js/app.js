@@ -1,0 +1,134 @@
+'use strict';
+
+const nombreProductos = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'water-can', 'wine-glass'];
+const allProductos = [];
+
+const elementoIzq = document.getElementById('img1');
+const elementoCent= document.getElementById('img2');
+const elementoDer = document.getElementById('img3');
+const contenedorImagenes = document.getElementById('imagenes');
+const elementosResultados= document.getElementById('resultados');
+const botonResultados = document.getElementById('mostrarResultados');
+const botonReiniciar = document.getElementById('reiniciar');
+
+function Producto(name, path) {
+    this.name = name;
+    this.path = path;
+    this.click = 0;
+    this.views = 0;
+}          
+
+function listarProductos(){
+    for (let i = 0; i < nombreProductos.length; i++) {
+        let pathImage='img/'+nombreProductos[i]+'.jpg';
+
+        if (nombreProductos[i] === 'sweep') {
+            pathImage='img/'+nombreProductos[i]+'.png';
+        }
+
+        let producto = new Producto(nombreProductos[i], pathImage);
+        allProductos.push(producto);
+    }
+}
+listarProductos();
+console.log(allProductos);
+
+function tresNumerosAleatorios(){
+    const numeros=[];
+    while(numeros.length<3){
+        const nuevoNumero = Math.floor(Math.random() * nombreProductos.length);
+        if(numeros.includes(nuevoNumero)===false){
+            numeros.push(nuevoNumero);
+        }
+    }
+    console.log(numeros);
+    return numeros;
+}
+
+const productRank = {
+    totalClick: 0,
+    votosRonda: 5,
+    objetoIzq: null,
+    objetoCent: null,
+    objetoDer: null,
+
+    mostrarImagenes: function () {
+        const index= tresNumerosAleatorios();
+        productRank.objetoIzq = allProductos[index[0]];
+        productRank.objetoCent = allProductos[index[1]];
+        productRank.objetoDer = allProductos[index[2]];
+
+        //visualizaciones
+        productRank.objetoIzq.views += 1;
+        productRank.objetoCent.views += 1;
+        productRank.objetoDer.views += 1;
+
+        //imagen izquierda
+        elementoIzq.src = productRank.objetoIzq.path;
+        elementoIzq.name = productRank.objetoIzq.name;
+
+        //imagen centro
+        elementoCent.src = productRank.objetoCent.path;
+        elementoCent.name = productRank.objetoCent.name;
+
+        //imagen derecha    
+        elementoDer.src = productRank.objetoDer.path;
+        elementoDer.name = productRank.objetoDer.name;
+    },
+
+    contarClick: function (id) {
+        for (let i = 0; i < allProductos.length; i++) {
+            if (allProductos[i].name === id) {
+                allProductos[i].click += 1;
+                this.totalClick += 1;
+                console.log(allProductos[i].name + 'tiene ' + allProductos[i].click + ' clicks');
+            }
+        }
+    },
+
+    mostrarResultados: function () {
+        const lista = document.createElement('ul');
+        for (let i = 0; i < allProductos.length; i++) {
+            const item = document.createElement('li');
+            const contenido = allProductos[i].name +':  '+ 'tiene ' + allProductos[i].click +' '+'  clicks';
+            item.textContent = contenido;
+            lista.appendChild(item);
+        }
+        const itemFinal = document.createElement('li');
+        itemFinal.textContent = 'total de clicks: ' + productRank.totalClick;
+        lista.appendChild(itemFinal);
+        elementosResultados.appendChild(lista);
+    },
+    mostrarBoton: function () {
+        botonResultados.hidden = false;
+        botonResultados.addEventListener('click', function () {
+            botonReiniciar.hidden = false;
+            botonResultados.hidden = true;
+            productRank.mostrarResultados();
+        });
+        botonReiniciar.addEventListener('click', function () {
+            // botonReiniciar.hidden = true;
+            location.reload();
+        });
+    },
+    onClick: function (event) {
+        if (event.target.name === productRank.objetoIzq.name || event.target.name === productRank.objetoCent.name || event.target.name === productRank.objetoDer.name) {
+            productRank.contarClick(event.target.name);
+            if (productRank.totalClick % productRank.votosRonda === 0) {
+                contenedorImagenes.removeEventListener('click', productRank.onClick);
+                productRank.mostrarBoton();
+            }
+            productRank.mostrarImagenes();
+            console.log(event);
+        } else {
+            alert('haz click en una imagen');
+        }
+        console.log(event);
+    },
+
+}
+
+// console.log(productRank.numeroAleatorio())
+
+contenedorImagenes.addEventListener('click', productRank.onClick);
+productRank.mostrarImagenes();
