@@ -3,53 +3,60 @@
 const nombreProductos = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'water-can', 'wine-glass'];
 const allProductos = [];
 
+const elementoIzq = document.getElementById('img1');
+const elementoCent= document.getElementById('img2');
+const elementoDer = document.getElementById('img3');
+const contenedorImagenes = document.getElementById('imagenes');
+const elementosResultados= document.getElementById('resultados');
+const botonResultados = document.getElementById('mostrarResultados');
+const botonReiniciar = document.getElementById('reiniciar');
+
 function Producto(name, path) {
     this.name = name;
     this.path = path;
     this.click = 0;
     this.views = 0;
-}
+}          
 
-function listarProductos() {
+function listarProductos(){
     for (let i = 0; i < nombreProductos.length; i++) {
+        let pathImage='img/'+nombreProductos[i]+'.jpg';
+
         if (nombreProductos[i] === 'sweep') {
-            let producto = new Producto(nombreProductos[i], 'img/' + nombreProductos[i] + '.jpg');
-            allProductos.push(producto);
-        } else {
-            let producto = new Producto(nombreProductos[i], 'img/' + nombreProductos[i] + '.jpg');
-            allProductos.push(producto);
+            pathImage='img/'+nombreProductos[i]+'.png';
         }
+
+        let producto = new Producto(nombreProductos[i], pathImage);
+        allProductos.push(producto);
     }
 }
-
 listarProductos();
 console.log(allProductos);
 
+function tresNumerosAleatorios(){
+    const numeros=[];
+    while(numeros.length<3){
+        const nuevoNumero = Math.floor(Math.random() * nombreProductos.length);
+        if(numeros.includes(nuevoNumero)===false){
+            numeros.push(nuevoNumero);
+        }
+    }
+    console.log(numeros);
+    return numeros;
+}
+
 const productRank = {
     totalClick: 0,
-    votosRonda: 25,
+    votosRonda: 5,
     objetoIzq: null,
     objetoCent: null,
     objetoDer: null,
 
-    elementoIzq: document.getElementById('img1'),
-    elementoCent: document.getElementById('img2'),
-    elementoDer: document.getElementById('img3'),
-
-    contenedorImagenes: document.getElementById('imagenes'),
-    elementosResultados: document.getElementById('resultados'),
-
-    botonResultados: document.getElementById('mostrarResultados'),
-    botonReiniciar: document.getElementById('reiniciar'),
-
-    numeroAleatorio: function () {
-        return Math.floor(Math.random() * nombreProductos.length);
-    },
-
     mostrarImagenes: function () {
-        productRank.objetoIzq = allProductos[productRank.numeroAleatorio()];
-        productRank.objetoCent = allProductos[productRank.numeroAleatorio()];
-        productRank.objetoDer = allProductos[productRank.numeroAleatorio()];
+        const index= tresNumerosAleatorios();
+        productRank.objetoIzq = allProductos[index[0]];
+        productRank.objetoCent = allProductos[index[1]];
+        productRank.objetoDer = allProductos[index[2]];
 
         //visualizaciones
         productRank.objetoIzq.views += 1;
@@ -57,16 +64,16 @@ const productRank = {
         productRank.objetoDer.views += 1;
 
         //imagen izquierda
-        productRank.elementoIzq.src = productRank.objetoIzq.path;
-        productRank.elementoIzq.src = productRank.objetoIzq.name;
+        elementoIzq.src = productRank.objetoIzq.path;
+        elementoIzq.name = productRank.objetoIzq.name;
 
         //imagen centro
-        productRank.elementoCent.src = productRank.objetoCent.path;
-        productRank.elementoCent.src = productRank.objetoCent.name;
+        elementoCent.src = productRank.objetoCent.path;
+        elementoCent.name = productRank.objetoCent.name;
 
         //imagen derecha    
-        productRank.elementoDer.src = productRank.objetoDer.path;
-        productRank.elementoDer.src = productRank.objetoDer.name;
+        elementoDer.src = productRank.objetoDer.path;
+        elementoDer.name = productRank.objetoDer.name;
     },
 
     contarClick: function (id) {
@@ -74,7 +81,7 @@ const productRank = {
             if (allProductos[i].name === id) {
                 allProductos[i].click += 1;
                 this.totalClick += 1;
-                console.log(allProductos[i].name + 'tiene' + allProductos[i].click + 'clicks');
+                console.log(allProductos[i].name + 'tiene ' + allProductos[i].click + ' clicks');
             }
         }
     },
@@ -83,35 +90,36 @@ const productRank = {
         const lista = document.createElement('ul');
         for (let i = 0; i < allProductos.length; i++) {
             const item = document.createElement('li');
-            console.log(allProductos[i].name + 'tiene' + allProductos[i].click + 'clicks');
+            const contenido = allProductos[i].name +':  '+ 'tiene ' + allProductos[i].click +' '+'  clicks';
             item.textContent = contenido;
             lista.appendChild(item);
         }
         const itemFinal = document.createElement('li');
-        itemFinal.textContent = 'total de clicks' + productRank.totalClick;
+        itemFinal.textContent = 'total de clicks: ' + productRank.totalClick;
         lista.appendChild(itemFinal);
-        this.elementosResultados.appendChild(lista);
+        elementosResultados.appendChild(lista);
     },
     mostrarBoton: function () {
-        this.botonResultados.hidden = false;
-        this.botonResultados.addEventListener('click', function () {
-            productRank.botonReiniciar.hidden = false;
-            productRank.botonResultados.hidden = true;
+        botonResultados.hidden = false;
+        botonResultados.addEventListener('click', function () {
+            botonReiniciar.hidden = false;
+            botonResultados.hidden = true;
             productRank.mostrarResultados();
-
-            productRank.botonReiniciar.addEventListener('click', function () {
-                productRank.botonReiniciar.hidden = true;
-            });
+        });
+        botonReiniciar.addEventListener('click', function () {
+            // botonReiniciar.hidden = true;
+            location.reload();
         });
     },
     onClick: function (event) {
-        if (event.target.id === productRank.objetoIzq.name || event.target.id === productRank.objetoCent.name || event.target.id === productRank.objetoDer.name) {
-            productRank.contarClick(event.target.id);
+        if (event.target.name === productRank.objetoIzq.name || event.target.name === productRank.objetoCent.name || event.target.name === productRank.objetoDer.name) {
+            productRank.contarClick(event.target.name);
             if (productRank.totalClick % productRank.votosRonda === 0) {
-                productRank.contenedorImagenes.removeEventListener('click', productRank.onClick);
+                contenedorImagenes.removeEventListener('click', productRank.onClick);
                 productRank.mostrarBoton();
             }
             productRank.mostrarImagenes();
+            console.log(event);
         } else {
             alert('haz click en una imagen');
         }
@@ -122,5 +130,5 @@ const productRank = {
 
 // console.log(productRank.numeroAleatorio())
 
-productRank.contenedorImagenes.addEventListener('click', productRank.onClick);
+contenedorImagenes.addEventListener('click', productRank.onClick);
 productRank.mostrarImagenes();
