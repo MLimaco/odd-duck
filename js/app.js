@@ -4,10 +4,10 @@ const nombreProductos = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bub
 const allProductos = [];
 
 const elementoIzq = document.getElementById('img1');
-const elementoCent= document.getElementById('img2');
+const elementoCent = document.getElementById('img2');
 const elementoDer = document.getElementById('img3');
 const contenedorImagenes = document.getElementById('imagenes');
-const elementosResultados= document.getElementById('resultados');
+const elementosResultados = document.getElementById('resultados');
 const botonResultados = document.getElementById('mostrarResultados');
 const botonReiniciar = document.getElementById('reiniciar');
 
@@ -16,14 +16,14 @@ function Producto(name, path) {
     this.path = path;
     this.click = 0;
     this.views = 0;
-}          
+}
 
-function listarProductos(){
+function listarProductos() {
     for (let i = 0; i < nombreProductos.length; i++) {
-        let pathImage='img/'+nombreProductos[i]+'.jpg';
+        let pathImage = 'img/' + nombreProductos[i] + '.jpg';
 
         if (nombreProductos[i] === 'sweep') {
-            pathImage='img/'+nombreProductos[i]+'.png';
+            pathImage = 'img/' + nombreProductos[i] + '.png';
         }
 
         let producto = new Producto(nombreProductos[i], pathImage);
@@ -33,11 +33,11 @@ function listarProductos(){
 listarProductos();
 console.log(allProductos);
 
-function tresNumerosAleatorios(){
-    const numeros=[];
-    while(numeros.length<3){
+function tresNumerosAleatorios() {
+    const numeros = [];
+    while (numeros.length < 3) {
         const nuevoNumero = Math.floor(Math.random() * nombreProductos.length);
-        if(numeros.includes(nuevoNumero)===false){
+        if (numeros.includes(nuevoNumero) === false) {
             numeros.push(nuevoNumero);
         }
     }
@@ -53,7 +53,7 @@ const productRank = {
     objetoDer: null,
 
     mostrarImagenes: function () {
-        const index= tresNumerosAleatorios();
+        const index = tresNumerosAleatorios();
         productRank.objetoIzq = allProductos[index[0]];
         productRank.objetoCent = allProductos[index[1]];
         productRank.objetoDer = allProductos[index[2]];
@@ -90,7 +90,7 @@ const productRank = {
         const lista = document.createElement('ul');
         for (let i = 0; i < allProductos.length; i++) {
             const item = document.createElement('li');
-            const contenido = allProductos[i].name +':  '+ 'tiene ' + allProductos[i].click +' '+'  clicks';
+            const contenido = allProductos[i].name + ':  ' + 'tiene ' + allProductos[i].click + ' ' + '  clicks';
             item.textContent = contenido;
             lista.appendChild(item);
         }
@@ -105,6 +105,7 @@ const productRank = {
             botonReiniciar.hidden = false;
             botonResultados.hidden = true;
             productRank.mostrarResultados();
+            renderChart();
         });
         botonReiniciar.addEventListener('click', function () {
             // botonReiniciar.hidden = true;
@@ -128,6 +129,91 @@ const productRank = {
 
 }
 
+function renderChart() {
+    const ctx = document.getElementById('canvas').getContext('2d');
+    const productVotes = [];
+    const productTitle = [];
+    const productViews = [];
+
+    for (let i = 0; i < allProductos.length; i++) {
+        const elemento = allProductos[i];
+        productVotes.push(elemento.click);
+        productTitle.push(elemento.name);
+        productViews.push(elemento.views);
+    }
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: productTitle,
+            datasets: [
+                {
+                    label: '# de click',
+                    data: productVotes,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: '# de views',
+                    data: productViews,
+                    backgroundColor: [
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            scales: {
+                x: {
+                    type: 'category',
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        display: false,
+                    },
+
+                }
+            }
+        },
+    })
+
+}
 // console.log(productRank.numeroAleatorio())
 
 contenedorImagenes.addEventListener('click', productRank.onClick);
