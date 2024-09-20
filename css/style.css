@@ -1,8 +1,46 @@
-
-#img1, #img2,#img3{
-    width: 200px;
+:root {
+    --font-encabezados: "Righteous", sans-serif;
+    --font-cuerpo: "Roboto", sans-serif;
 }
-#graficos{
+
+header {
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+}
+h1 {
+    font-family: var(--font-encabezados);
+    color: black;
+    font-size: 50px;
+}
+main{
+    margin-top: 50px;
+}
+#imagenes {
+    display: flex;
+    grid-column: 3;
+    gap: 50px;
+    justify-content: center;.
+}
+#img1,
+#img2,
+#img3 {
+    width: 200px;
+    object-fit: contain;
+    border: 3px dotted black;
+}
+#resultados {
+    margin-top: 50px;
+    display: grid;
+    grid-row: 2;
+    justify-content: center;.
+}
+#graficos {
     width: 700px;
     margin: 0px auto;
+}
+footer{
+background-color: gray;
+display: flex;
+justify-content: center;
 }
