@@ -30,8 +30,6 @@ function listarProductos() {
         allProductos.push(producto);
     }
 }
-listarProductos();
-console.log(allProductos);
 
 function tresNumerosAleatorios() {
     const numeros = [];
@@ -47,7 +45,7 @@ function tresNumerosAleatorios() {
 
 const productRank = {
     totalClick: 0,
-    votosRonda: 5,
+    votosRonda: 25,
     objetoIzq: null,
     objetoCent: null,
     objetoDer: null,
@@ -106,6 +104,7 @@ const productRank = {
             botonResultados.hidden = true;
             productRank.mostrarResultados();
             renderChart();
+            saveLocalStorage();
         });
         botonReiniciar.addEventListener('click', function () {
             // botonReiniciar.hidden = true;
@@ -216,5 +215,29 @@ function renderChart() {
 }
 // console.log(productRank.numeroAleatorio())
 
-contenedorImagenes.addEventListener('click', productRank.onClick);
-productRank.mostrarImagenes();
+function saveLocalStorage() {
+    const productosJSON = JSON.stringify(allProductos);
+    localStorage.setItem('productos', productosJSON);
+}
+function getDataLocalStorage() {
+    let productosRecuperados = localStorage.getItem('productos');
+    if (productosRecuperados !== null) {
+        let conversion = JSON.parse(localStorage.getItem('productos'));
+        console.log(conversion);
+        for (let i = 0; i < conversion.length; i++) {
+            let index = conversion[i];
+            let construccion = new Producto(index.name, index.path);
+            construccion.click = index.click;
+            construccion.view = index.view;
+            allProductos.push(construccion);
+        }
+    } else {
+        listarProductos();
+    }
+}
+function start() {
+    getDataLocalStorage();
+    contenedorImagenes.addEventListener('click', productRank.onClick);
+    productRank.mostrarImagenes();
+}
+start();
