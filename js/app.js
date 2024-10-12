@@ -20,10 +20,10 @@ function Producto(name, path) {
 
 function listarProductos() {
     for (let i = 0; i < nombreProductos.length; i++) {
-        let pathImage = './img/' + nombreProductos[i] + '.jpg';
+        let pathImage = 'https://github.com/MLimaco/odd-duck/blob/f8c8c995dedd8527e10d4e7cdc77ba75901efe9a/img/' + nombreProductos[i] + '.jpg';
 
         if (nombreProductos[i] === 'sweep') {
-            pathImage = './img/' + nombreProductos[i] + '.png';
+            pathImage = 'https://github.com/MLimaco/odd-duck/blob/f8c8c995dedd8527e10d4e7cdc77ba75901efe9a/img/' + nombreProductos[i] + '.png';
         }
 
         let producto = new Producto(nombreProductos[i], pathImage);
